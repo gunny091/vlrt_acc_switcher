@@ -6,7 +6,7 @@ import time
 import json
 
 print("Valorant Account Switcher by Chadol27")
-print("Version 1.1")
+print("Version 1.2")
 print()
 
 def exit_timeout(text):
@@ -16,7 +16,7 @@ def exit_timeout(text):
   exit()
 
 def load_account(path):
-  # 계정 정보 불러오기
+  # Load account information
   try:
     with open(path, "r") as f:
       accounts = json.load(f)
@@ -25,17 +25,17 @@ def load_account(path):
   except:
     exit_timeout("Error while read accounts")
 
-  # 계정이가 없어요
+  # No accounts
   keys = accounts.keys()
   if (len(keys) == 0):
     exit_timeout("No account")
 
-  # 계정 표시
+  # Display accounts
   print("Select an account")
   for index, account in enumerate(keys):
     print(f"{index}: {account}")
 
-  # 계정 골라
+  # Select account
   while True:
     user_input = input("> ")
     if not user_input.isnumeric() : continue
@@ -45,14 +45,14 @@ def load_account(path):
     selected = list(keys)[user_input_number]
     break
 
-  # 아이디 비번 추출
+  # Extract ID and password
   id = accounts[selected][0]
   pwd = accounts[selected][1]
   return id, pwd
 
 
 def input_ready():
-  # 프로세스 실행 확인
+  # Check if process is running
   def check_process_running(process_name):
     for proc in psutil.process_iter(['pid', 'name']):
       if proc.info['name'] == process_name:
@@ -62,42 +62,61 @@ def input_ready():
   if not check_process_running("Riot Client.exe"):
     exit_timeout("Please launch Riot Client")
 
-  # 윈도우 실행 확인
+  # Check if window is running
   window = pygetwindow.getWindowsWithTitle('Riot Client')[0]
   if window:
     window.activate()
   else:
     exit_timeout("Please launch Riot Client UI")
 
-  image_hangul_path = "./username_hangul.png"
+  username_path = "./username_hangul.png"
+  account_path = "./account.png"
+  logout_path = "./logout.png"
 
-  time.sleep(1)
+  time.sleep(0.2)
 
-  # 계정이름 위치 찾기
+  # Logout if logged in
   try:
-    location = pyautogui.locateCenterOnScreen(image_hangul_path,grayscale=True)
+    account_location = pyautogui.locateCenterOnScreen(account_path,grayscale=True, confidence=0.8)
   except:
+    pass
+  else:
+    pyautogui.click(account_location)
+    time.sleep(0.1)
+    try:
+      logout_location = pyautogui.locateCenterOnScreen(logout_path,grayscale=True, confidence=0.8)
+    except:
+      pass
+    else:
+      pyautogui.click(logout_location)
+      time.sleep(2)
+
+  time.sleep(0.1)
+
+  # Find username location
+  try:
+    username_location = pyautogui.locateCenterOnScreen(username_path,grayscale=True, confidence=0.8)
+  except pyautogui.ImageNotFoundException:
     exit_timeout("Can't find the user name button")
 
-  pyautogui.click(location)
+  pyautogui.click(username_location)
   time.sleep(0.1)
 
 def input_idpwd(id, pwd):
-  # 아이디 입력
+  # Input ID
   pyperclip.copy(id)
   time.sleep(0.1)
 
   pyautogui.hotkey("ctrl", "v")
   pyautogui.press("tab")
 
-  # 비번 입력
+  # Input password
   pyperclip.copy(pwd)
   time.sleep(0.1)
 
   pyautogui.hotkey("ctrl", "v")
   
-  # 엔터
-
+  # Press enter
   pyautogui.press("enter")
 
 try:
@@ -106,10 +125,10 @@ try:
 
   stopmessage = "getting ready to input"
   input_ready()
-  
+
   stopmessage = "inputing"
   input_idpwd(*idpwd)
-except:
-  exit_timeout("Error while " + stopmessage)
+except Exception as e:
+  exit_timeout("Error while " + stopmessage) 
 else:
   exit_timeout("Success")
