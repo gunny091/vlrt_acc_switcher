@@ -6,7 +6,7 @@ import time
 import json
 
 print("Valorant Account Switcher by Chadol27")
-print("Version 1.2")
+print("Version 1.3")
 print()
 
 def exit_timeout(text):
@@ -14,6 +14,21 @@ def exit_timeout(text):
   print("This window will be closed in 5 seconds")
   time.sleep(5)
   exit()
+
+def try_to_click_image(path, click=True):
+  try:
+    location = pyautogui.locateCenterOnScreen(path, grayscale=True)
+  except pyautogui.ImageNotFoundException:
+    return False
+  else:
+    if click : pyautogui.click(location)
+    return True
+
+def try_to_click_images(paths, click=True):
+  for path in paths:
+    if try_to_click_image(path, click):
+      return True
+  return False
 
 def load_account(path):
   # Load account information
@@ -49,9 +64,22 @@ def load_account(path):
   id = accounts[selected][0]
   pwd = accounts[selected][1]
   return id, pwd
-
-
+  
 def input_ready():
+  account_paths = ["./account_small.png", "./account_big.png"]
+  logout_paths = ["./logout.png", "./logout_hover.png"]
+  username_paths = ["./username.png", "./username_clicked.png"]
+
+  if try_to_click_images(account_paths):
+    time.sleep(0.1)
+    try_to_click_images(logout_paths)
+    time.sleep(3)
+  if try_to_click_images(username_paths):
+    time.sleep(0.1)
+  else:
+    raise pyautogui.ImageNotFoundException
+
+def focus_window():
   # Check if process is running
   def check_process_running(process_name):
     for proc in psutil.process_iter(['pid', 'name']):
@@ -68,39 +96,8 @@ def input_ready():
     window.activate()
   else:
     exit_timeout("Please launch Riot Client UI")
+  time.sleep(0.5)
 
-  username_path = "./username_hangul.png"
-  account_path = "./account.png"
-  logout_path = "./logout.png"
-
-  time.sleep(0.2)
-
-  # Logout if logged in
-  try:
-    account_location = pyautogui.locateCenterOnScreen(account_path,grayscale=True, confidence=0.8)
-  except:
-    pass
-  else:
-    pyautogui.click(account_location)
-    time.sleep(0.1)
-    try:
-      logout_location = pyautogui.locateCenterOnScreen(logout_path,grayscale=True, confidence=0.8)
-    except:
-      pass
-    else:
-      pyautogui.click(logout_location)
-      time.sleep(2)
-
-  time.sleep(0.1)
-
-  # Find username location
-  try:
-    username_location = pyautogui.locateCenterOnScreen(username_path,grayscale=True, confidence=0.8)
-  except pyautogui.ImageNotFoundException:
-    exit_timeout("Can't find the user name button")
-
-  pyautogui.click(username_location)
-  time.sleep(0.1)
 
 def input_idpwd(id, pwd):
   # Input ID
@@ -123,12 +120,15 @@ try:
   stopmessage = "loading and selecting account"
   idpwd = load_account("./accounts.json")
 
+  stopmessage = "focusing Riot Client window"
+  focus_window()
+
   stopmessage = "getting ready to input"
   input_ready()
 
   stopmessage = "inputing"
   input_idpwd(*idpwd)
 except Exception as e:
-  exit_timeout("Error while " + stopmessage) 
+  exit_timeout("Error while " + stopmessage + ": " + str(e)) 
 else:
   exit_timeout("Success")
