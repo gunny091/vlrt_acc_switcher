@@ -5,7 +5,7 @@ import time
 import json
 
 print("Valorant Account Switcher by Chadol27")
-print("Version 1.5")
+print("Version 1.6")
 print()
 
 def exit_timeout(text):

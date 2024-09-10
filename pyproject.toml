@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "vlrt-acc-switcher"
+version = "1.6"
+description = "Valorant Account Switcher"
+authors = ["Your Name <you@example.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+pygetwindow = "^0.0.9"
+pyautogui = "^0.9.54"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
