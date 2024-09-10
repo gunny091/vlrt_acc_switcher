@@ -1,12 +1,11 @@
 import pygetwindow
-import psutil
 import pyautogui
 import pyperclip
 import time
 import json
 
 print("Valorant Account Switcher by Chadol27")
-print("Version 1.3")
+print("Version 1.4")
 print()
 
 def exit_timeout(text):
@@ -70,33 +69,40 @@ def input_ready():
   logout_paths = ["./logout.png", "./logout_hover.png"]
   username_paths = ["./username.png", "./username_clicked.png"]
 
-  if try_to_click_images(account_paths):
+  if try_to_click_images(username_paths):
+    time.sleep(0.1)
+    return
+  elif try_to_click_images(account_paths):
     time.sleep(0.1)
     try_to_click_images(logout_paths)
     time.sleep(3)
-  if try_to_click_images(username_paths):
-    time.sleep(0.1)
+    if try_to_click_images(username_paths):
+     time.sleep(0.1)
+     return
+    else:
+      raise pyautogui.ImageNotFoundException
   else:
     raise pyautogui.ImageNotFoundException
 
-def focus_window():
-  # Check if process is running
-  def check_process_running(process_name):
-    for proc in psutil.process_iter(['pid', 'name']):
-      if proc.info['name'] == process_name:
-        return True
+def focus_window(name):
+  try:
+    window = pygetwindow.getWindowsWithTitle(name)[0]
+    if window:
+      window.activate()
+      return True
+    else:
+      return False
+  except:
     return False
 
-  if not check_process_running("Riot Client.exe"):
-    exit_timeout("Please launch Riot Client")
-
+def ready_riot_client():
   # Check if window is running
-  window = pygetwindow.getWindowsWithTitle('Riot Client')[0]
-  if window:
-    window.activate()
-  else:
-    exit_timeout("Please launch Riot Client UI")
-  time.sleep(0.5)
+  for _ in range(3):
+    if (focus_window("Riot Client")):
+      time.sleep(0.5)
+      return
+    time.sleep(1)
+  exit_timeout("Please launch Riot Client")
 
 
 def input_idpwd(id, pwd):
@@ -121,7 +127,7 @@ try:
   idpwd = load_account("./accounts.json")
 
   stopmessage = "focusing Riot Client window"
-  focus_window()
+  ready_riot_client()
 
   stopmessage = "getting ready to input"
   input_ready()
