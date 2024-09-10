@@ -5,7 +5,7 @@ import time
 import json
 
 print("Valorant Account Switcher by Chadol27")
-print("Version 1.4")
+print("Version 1.5")
 print()
 
 def exit_timeout(text):
@@ -16,7 +16,7 @@ def exit_timeout(text):
 
 def try_to_click_image(path, click=True):
   try:
-    location = pyautogui.locateCenterOnScreen(path, grayscale=True)
+    location = pyautogui.locateCenterOnScreen(path, grayscale=True, confidence=0.9)
   except pyautogui.ImageNotFoundException:
     return False
   else:
@@ -65,9 +65,9 @@ def load_account(path):
   return id, pwd
   
 def input_ready():
-  account_paths = ["./account_small.png", "./account_big.png"]
-  logout_paths = ["./logout.png", "./logout_hover.png"]
-  username_paths = ["./username.png", "./username_clicked.png"]
+  account_paths = ["./img/account_small.png", "./img/account_big.png"]
+  logout_paths = ["./img/logout.png", "./img/logout_hover.png"]
+  username_paths = ["./img/username.png", "./img/username_clicked.png"]
 
   if try_to_click_images(username_paths):
     time.sleep(0.1)
@@ -80,9 +80,9 @@ def input_ready():
      time.sleep(0.1)
      return
     else:
-      raise pyautogui.ImageNotFoundException
+      raise Exception("Image not found")
   else:
-    raise pyautogui.ImageNotFoundException
+    raise Exception("Image not found")
 
 def focus_window(name):
   try:
