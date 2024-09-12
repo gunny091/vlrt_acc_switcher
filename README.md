@@ -1,7 +1,5 @@
 # Valorant Accouunt Switcher
 
----
-
 ## 기능
 
 라이엇게임즈 계정전환을 편하게 해주는 프로그램
