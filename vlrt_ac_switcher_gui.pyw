@@ -30,7 +30,7 @@ def window_and_title_buttons():
   root.resizable(False, True)
 
   # 제목
-  printlabel("Valorant Account Switcher\nv2.0 by chadol27", font=get_font(size=16), pady=10, fg="blue")
+  printlabel("Valorant Account Switcher\nv2.1 by chadol27", font=get_font(size=16), pady=10, fg="blue")
 
   make_log()
 
@@ -38,7 +38,7 @@ def window_and_title_buttons():
   def end():
     root.quit()
     asyncio.get_event_loop().stop()
-  exit_button = tk.Button(text="Exit", font=get_font(), command=end)
+  exit_button = tk.Button(text="Exit", font=get_font(), command=end, bg="light coral")
   exit_button.pack(padx=5, pady=5)
 
   accounts_file_button = tk.Button(text="Open Accounts File", font=get_font(), command=acc_file_btn_handler)
@@ -195,9 +195,11 @@ async def input_idpwd(id, pwd):
 async def letsgo_login(id, pwd):
   global is_logging_in
   try:
+    log("Loading Riot Client...")
     if not await ready_riot_client(): return
+    log("Getting ready to input...")
     if not await input_ready(): return
-    log("Input ready")
+    log("inputing...")
     await input_idpwd(id, pwd)
   except Exception as e:
     print(e)
