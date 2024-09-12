@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "vlrt-acc-switcher"
-version = "2.1"
+version = "2.2"
 description = "Valorant Account Switcher"
 authors = ["Your Name <you@example.com>"]
 readme = "README.md"

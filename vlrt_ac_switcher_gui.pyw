@@ -13,9 +13,16 @@ root = tk.Tk()
 # 계정 설정 파일
 accounts_path = "./accounts.json"
 
+# 색상들
+COLOR_RED = "LightCoral"
+COLOR_LIGHTBLUE = "SkyBlue"
+COLOR_BLUE = "MediumBlue"
+COLOR_GREEN = "MediumSeaGreen"
+COLOR_TITLE = "SteelBlue"
+
 # 폰트 이지하게 만들기
-def get_font(family="Segoe UI", size=12):
-  return font.Font(family=family, size=size)
+def get_font(family="Segoe UI", size=12, **kwargs):
+  return font.Font(family=family, size=size, **kwargs)
 
 # 라벨 이지하게 만들기
 def printlabel(text, font=get_font(), pady=5, **kwargs):
@@ -30,7 +37,7 @@ def window_and_title_buttons():
   root.resizable(False, True)
 
   # 제목
-  printlabel("Valorant Account Switcher\nv2.1 by chadol27", font=get_font(size=16), pady=10, fg="blue")
+  printlabel("Valorant Account Switcher\nv2.2 by chadol27", font=get_font(size=16, weight="bold"), pady=10, fg=COLOR_TITLE)
 
   make_log()
 
@@ -38,7 +45,7 @@ def window_and_title_buttons():
   def end():
     root.quit()
     asyncio.get_event_loop().stop()
-  exit_button = tk.Button(text="Exit", font=get_font(), command=end, bg="light coral")
+  exit_button = tk.Button(text="Exit", font=get_font(), command=end, bg=COLOR_RED)
   exit_button.pack(padx=5, pady=5)
 
   accounts_file_button = tk.Button(text="Open Accounts File", font=get_font(), command=acc_file_btn_handler)
@@ -50,7 +57,7 @@ def acc_file_btn_handler():
     with open(accounts_path, 'w') as f:
       json.dump({}, f)
   os.system("start " + accounts_path)
-  log("Account File Opened")
+  log("Account File Opened", fg=COLOR_GREEN)
 
 # 로그 라벨 만들기
 log_label = tk.Label()
@@ -59,8 +66,8 @@ def make_log():
   log_label = printlabel("<LOG>")
 
 # 로그 라벨 텍스트 변경
-def log(text):
-  log_label.config(text=text)
+def log(text, fg="black", **kwargs):
+  log_label.config(text=text, fg=fg, **kwargs)
 
 # 계정 정보 로딩하고 관련 버튼 만들기
 accounts = dict()
@@ -73,12 +80,12 @@ def load_account_and_button():
       if type(accounts) != dict:
         raise Exception
   except:
-    log("Error while read accounts file")
+    log("Error while read accounts file", fg=COLOR_RED)
     return
 
   # 계정이가 없어요
   if (len(accounts.keys()) == 0):
-    log("No account")
+    log("No account", fg=COLOR_RED)
     return
 
   # 계정 표시
@@ -95,7 +102,7 @@ def make_dropdown():
   dropdown = tk.OptionMenu(root, account_select_var, *keys)
   dropdown.config(font=get_font())
   dropdown.pack()
-  log("Account Loaded")
+  log("Account Loaded", fg=COLOR_GREEN)
 
 is_logging_in = False
 # 버튼 만들기
@@ -103,14 +110,14 @@ def make_login_button():
   def loginbutton_handler():
     global is_logging_in
     if is_logging_in:
-      log("Already logging in")
+      log("Already logging in", fg=COLOR_RED)
       return
     try:
       is_logging_in = True
       asyncio.create_task(letsgo_login(*accounts.get(account_select_var.get())))
     except:
-      log("Error loading account ID/PWD")
-  loginbutton = tk.Button(root, text="Log In", command=loginbutton_handler, font=get_font(), bg="light blue")
+      log("Error loading account ID/PWD", fg=COLOR_RED)
+  loginbutton = tk.Button(root, text="Log In", command=loginbutton_handler, font=get_font(), bg=COLOR_LIGHTBLUE)
   loginbutton.pack(padx=5,pady=5)
 
 # 화면에서 이미지 찾아 클릭
@@ -147,11 +154,10 @@ async def ready_riot_client():
   # Check if window is running
   for _ in range(3):
     if (focus_window("Riot Client")):
-      log("Riot Client ready")
       await asyncio.sleep(0.5)
       return True
     await asyncio.sleep(0.5)
-  log("Please launch Riot Client")
+  log("Please launch Riot Client", fg=COLOR_RED)
   return False
 
 # 아이디 비번 깔쌈하게 입력할 수 있게 대기
@@ -170,7 +176,7 @@ async def input_ready():
     if try_to_click_images(username_paths):
      await asyncio.sleep(0.1)
      return True
-  log("Error getting ready to input")
+  log("Error getting ready to input", fg=COLOR_RED)
   return False
 
 # 깔쌈한 입력
@@ -195,18 +201,17 @@ async def input_idpwd(id, pwd):
 async def letsgo_login(id, pwd):
   global is_logging_in
   try:
-    log("Loading Riot Client...")
+    log("Loading Riot Client...", fg=COLOR_BLUE)
     if not await ready_riot_client(): return
-    log("Getting ready to input...")
+    log("Getting ready to input...", fg=COLOR_BLUE)
     if not await input_ready(): return
-    log("inputing...")
+    log("Inputing...", fg=COLOR_BLUE)
     await input_idpwd(id, pwd)
   except Exception as e:
     print(e)
   else:
-    log("Success")
+    log("Success", fg=COLOR_GREEN)
   finally:
-    await asyncio.sleep(2)
     is_logging_in = False
 
 # 실행
