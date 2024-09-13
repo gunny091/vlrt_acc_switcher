@@ -33,11 +33,11 @@ def printlabel(text, font=get_font(), pady=5, **kwargs):
 # 창, 제목 버튼관련 설정
 def window_and_title_buttons():
   root.title("Valorant Account Switcher")
-  root.geometry("400x600")
-  root.resizable(False, True)
+  root.geometry("350x450")
+  root.resizable(False, False)
 
   # 제목
-  printlabel("Valorant Account Switcher\nv2.2 by chadol27", font=get_font(size=16, weight="bold"), pady=10, fg=COLOR_TITLE)
+  printlabel("Valorant Account Switcher\nv2.3 by chadol27", font=get_font(size=16, weight="bold"), pady=10, fg=COLOR_TITLE)
 
   make_log()
 
@@ -48,8 +48,32 @@ def window_and_title_buttons():
   exit_button = tk.Button(text="Exit", font=get_font(), command=end, bg=COLOR_RED)
   exit_button.pack(padx=5, pady=5)
 
+  kill_valorant_button = tk.Button(text="Kill Valorant", font=get_font(), command=kill_valorant, bg=COLOR_RED)
+  kill_valorant_button.pack(padx=5, pady=5)
+
   accounts_file_button = tk.Button(text="Open Accounts File", font=get_font(), command=acc_file_btn_handler)
   accounts_file_button.pack(padx=5, pady=5)
+
+# 발로란트 죽이기
+def kill_valorant():
+  commands = [
+    ["taskkill /F /IM VALORANT-Win64-Shipping.exe", "vw"],
+    ["taskkill /F /IM VALORANT.exe", "v"],
+    ["taskkill /F /IM RiotClientServices.exe", "rc"]
+  ]
+  # 실행
+  results = [os.system(command[0]) for command in commands]
+  # 이쁘게 정리
+  success = 0
+  for index, result in enumerate(results):
+    if result == 0:
+      ox = "O"
+      success += 1
+    else:
+      ox = "X"
+    results[index] = f"{commands[index][1]}: {ox}"
+
+  log(f"Killed Valorant, Code: {", ".join(results)}", fg=COLOR_GREEN if success > 0 else COLOR_RED)
 
 # 계정 설정 파일 열기
 def acc_file_btn_handler():
