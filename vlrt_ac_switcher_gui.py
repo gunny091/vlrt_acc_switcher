@@ -3,6 +3,7 @@ from tkinter import font
 import json
 import asyncio
 import os
+import sys
 import pyautogui
 import pyperclip
 import pygetwindow
@@ -19,6 +20,13 @@ COLOR_LIGHTBLUE = "SkyBlue"
 COLOR_BLUE = "MediumBlue"
 COLOR_GREEN = "MediumSeaGreen"
 COLOR_TITLE = "SteelBlue"
+
+# pyinstaller 상대 경로
+def resource_path(relative_path):
+  if hasattr(sys, '_MEIPASS'):
+    return os.path.join(sys._MEIPASS, relative_path)
+  else:
+    return os.path.join(os.path.abspath("."), relative_path)
 
 # 폰트 이지하게 만들기
 def get_font(family="Segoe UI", size=12, **kwargs):
@@ -37,7 +45,7 @@ def window_and_title_buttons():
   root.resizable(False, False)
 
   # 제목
-  printlabel("Valorant Account Switcher\nv2.3 by chadol27", font=get_font(size=16, weight="bold"), pady=10, fg=COLOR_TITLE)
+  printlabel("Valorant Account Switcher\nv2.4 by chadol27", font=get_font(size=16, weight="bold"), pady=10, fg=COLOR_TITLE)
 
   make_log()
 
@@ -186,9 +194,9 @@ async def ready_riot_client():
 
 # 아이디 비번 깔쌈하게 입력할 수 있게 대기
 async def input_ready():
-  account_paths = ["./img/account_small.png", "./img/account_big.png"]
-  logout_paths = ["./img/logout.png", "./img/logout_hover.png"]
-  username_paths = ["./img/username.png", "./img/username_clicked.png"]
+  account_paths = [resource_path("./img/account_small.png"), resource_path("./img/account_big.png")]
+  logout_paths = [resource_path("./img/logout.png"), resource_path("./img/logout_hover.png")]
+  username_paths = [resource_path("./img/username.png"), resource_path("./img/username_clicked.png")]
 
   if try_to_click_images(username_paths):
     await asyncio.sleep(0.1)

@@ -2,10 +2,10 @@
 
 
 a = Analysis(
-    ['vlrt_ac_switcher_gui.pyw'],
+    ['vlrt_ac_switcher_gui.py'],
     pathex=[],
     binaries=[],
-    datas=[],
+    datas=[('img', 'img')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},

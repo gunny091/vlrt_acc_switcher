@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "vlrt-acc-switcher"
-version = "2.3"
+version = "2.4"
 description = "Valorant Account Switcher"
 authors = ["Your Name <you@example.com>"]
 readme = "README.md"
@@ -15,6 +15,12 @@ pillow = "^10.4.0"
 opencv-python = "^4.10.0.84"
 pyinstaller = "^6.10.0"
 
+[tool.poetry.group.dev.dependencies]
+poethepoet = "^0.28.0"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poe.tasks]
+build = "pyinstaller --windowed --onefile --add-data \"img;img\" vlrt_ac_switcher_gui.py"
