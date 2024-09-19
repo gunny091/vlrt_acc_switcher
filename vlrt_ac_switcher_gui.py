@@ -7,6 +7,7 @@ import sys
 import pyautogui
 import pyperclip
 import pygetwindow
+import subprocess
 
 # 창 준비
 root = tk.Tk()
@@ -20,6 +21,15 @@ COLOR_LIGHTBLUE = "SkyBlue"
 COLOR_BLUE = "MediumBlue"
 COLOR_GREEN = "MediumSeaGreen"
 COLOR_TITLE = "SteelBlue"
+
+# 실행
+def cmdrun(command, shell=True, isasync=False, **kwargs):
+  if isasync:
+    result = subprocess.Popen(command, shell=shell, creationflags=subprocess.CREATE_NO_WINDOW, **kwargs)
+  else:
+    result = subprocess.run(command, shell=shell, creationflags=subprocess.CREATE_NO_WINDOW, **kwargs)
+
+  return result
 
 # pyinstaller 상대 경로
 def resource_path(relative_path):
@@ -50,7 +60,7 @@ def window_and_title_buttons():
   root.resizable(False, False)
 
   # 제목
-  printlabel("Valorant Account Switcher\nv2.5 by chadol27", font=get_font(size=16, weight="bold"), pady=10, fg=COLOR_TITLE)
+  printlabel("Valorant Account Switcher\nv2.6 by chadol27", font=get_font(size=16, weight="bold"), pady=10, fg=COLOR_TITLE)
 
   make_log()
 
@@ -65,7 +75,14 @@ def window_and_title_buttons():
 
   printbutton("Kill Vlrt/RC", command=kill_valorant, bg=COLOR_RED, packargs={"side":"left"}, at=frame)
 
+  printbutton("Launch RC", command=launch_RC, at=frame, packargs={"side":"left"})
+
   printbutton("Open Accounts.json", command=acc_file_btn_handler)
+
+# 라클 실행
+def launch_RC():
+  cmdrun("\"C:\\Riot Games\\Riot Client\\RiotClientServices.exe\"", isasync=True)
+  log("Launched Riot Client", fg=COLOR_GREEN)
 
 # 발로란트 죽이기
 def kill_valorant():
@@ -75,7 +92,7 @@ def kill_valorant():
     ["taskkill /F /IM RiotClientServices.exe", "rc"]
   ]
   # 실행
-  results = [os.system(command[0]) for command in commands]
+  results = [cmdrun(command[0]).returncode for command in commands]
   # 이쁘게 정리
   success = 0
   for index, result in enumerate(results):
@@ -93,7 +110,7 @@ def acc_file_btn_handler():
   if not os.path.exists(accounts_path):
     with open(accounts_path, 'w') as f:
       json.dump({}, f)
-  os.system("start " + accounts_path)
+  cmdrun("start " + accounts_path, isasync=True)
   log("Account File Opened", fg=COLOR_GREEN)
 
 # 로그 라벨 만들기
