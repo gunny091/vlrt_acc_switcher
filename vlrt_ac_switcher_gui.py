@@ -33,10 +33,15 @@ def get_font(family="Segoe UI", size=12, **kwargs):
   return font.Font(family=family, size=size, **kwargs)
 
 # 라벨 이지하게 만들기
-def printlabel(text, font=get_font(), pady=5, **kwargs):
-  label = tk.Label(root, text=text, font=font, **kwargs)
-  label.pack(pady=pady)
+def printlabel(text, font=get_font(), padx=5, pady=5, at=root, packargs={}, **kwargs):
+  label = tk.Label(at, text=text, font=font, **kwargs)
+  label.pack(padx=padx, pady=pady, **packargs)
   return label
+
+def printbutton(text, font=get_font(), padx=5, pady=5, at=root, packargs={}, **kwargs):
+  button = tk.Button(at, text=text, font=font, **kwargs)
+  button.pack(padx=padx, pady=pady, **packargs)
+  return button
 
 # 창, 제목 버튼관련 설정
 def window_and_title_buttons():
@@ -45,22 +50,22 @@ def window_and_title_buttons():
   root.resizable(False, False)
 
   # 제목
-  printlabel("Valorant Account Switcher\nv2.4 by chadol27", font=get_font(size=16, weight="bold"), pady=10, fg=COLOR_TITLE)
+  printlabel("Valorant Account Switcher\nv2.5 by chadol27", font=get_font(size=16, weight="bold"), pady=10, fg=COLOR_TITLE)
 
   make_log()
 
   # 버튼들
+  frame = tk.Frame(root)
+  frame.pack()
+
   def end():
     root.quit()
     asyncio.get_event_loop().stop()
-  exit_button = tk.Button(text="Exit", font=get_font(), command=end, bg=COLOR_RED)
-  exit_button.pack(padx=5, pady=5)
+  printbutton("Exit", command=end, bg=COLOR_RED, packargs={"side":"left"}, at=frame)
 
-  kill_valorant_button = tk.Button(text="Kill Valorant", font=get_font(), command=kill_valorant, bg=COLOR_RED)
-  kill_valorant_button.pack(padx=5, pady=5)
+  printbutton("Kill Vlrt/RC", command=kill_valorant, bg=COLOR_RED, packargs={"side":"left"}, at=frame)
 
-  accounts_file_button = tk.Button(text="Open Accounts File", font=get_font(), command=acc_file_btn_handler)
-  accounts_file_button.pack(padx=5, pady=5)
+  printbutton("Open Accounts.json", command=acc_file_btn_handler)
 
 # 발로란트 죽이기
 def kill_valorant():
@@ -130,10 +135,15 @@ def make_dropdown():
   keys = accounts.keys()
   account_select_var.set(list(keys)[0])
 
-  printlabel("Select Account:")
-  dropdown = tk.OptionMenu(root, account_select_var, *keys)
+  # 한 줄에 넣기 위한 프레임
+  frame = tk.Frame(root)
+  frame.pack()
+
+  # 화면에 패킹
+  printlabel("Select Account:", at=frame, packargs={"side":"left"})
+  dropdown = tk.OptionMenu(frame, account_select_var, *keys)
   dropdown.config(font=get_font())
-  dropdown.pack()
+  dropdown.pack(side="left")
   log("Account Loaded", fg=COLOR_GREEN)
 
 is_logging_in = False
