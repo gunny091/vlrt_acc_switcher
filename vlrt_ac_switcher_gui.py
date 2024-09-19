@@ -159,8 +159,7 @@ def make_login_button():
       asyncio.create_task(letsgo_login(*accounts.get(account_select_var.get())))
     except:
       log("Error loading account ID/PWD", fg=COLOR_RED)
-  loginbutton = tk.Button(root, text="Log In", command=loginbutton_handler, font=get_font(), bg=COLOR_LIGHTBLUE)
-  loginbutton.pack(padx=5,pady=5)
+  printbutton("Log In", command=loginbutton_handler, bg=COLOR_LIGHTBLUE)
 
 # 화면에서 이미지 찾아 클릭
 def try_to_click_image(path, click=True):
