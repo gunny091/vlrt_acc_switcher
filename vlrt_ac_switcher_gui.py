@@ -60,7 +60,7 @@ def window_and_title_buttons():
   root.resizable(False, False)
 
   # 제목
-  printlabel("Valorant Account Switcher\nv2.6 by chadol27", font=get_font(size=16, weight="bold"), pady=10, fg=COLOR_TITLE)
+  printlabel("Valorant Account Switcher\nv2.7 by chadol27", font=get_font(size=16, weight="bold"), pady=10, fg=COLOR_TITLE)
 
   make_log()
 
@@ -181,7 +181,7 @@ def make_login_button():
 # 화면에서 이미지 찾아 클릭
 def try_to_click_image(path, click=True):
   try:
-    location = pyautogui.locateCenterOnScreen(path, grayscale=True, confidence=0.9)
+    location = pyautogui.locateCenterOnScreen(path, grayscale=True, confidence=0.98)
   except pyautogui.ImageNotFoundException:
     return False
   else:
@@ -218,11 +218,19 @@ async def ready_riot_client():
   log("Please launch Riot Client", fg=COLOR_RED)
   return False
 
+async def stay_login():
+  # stay log in
+  stay_login_path = resource_path("./img/stay_login.png")
+  if try_to_click_image(stay_login_path):
+    await asyncio.sleep(0.1)
+
 # 아이디 비번 깔쌈하게 입력할 수 있게 대기
 async def input_ready():
   account_paths = [resource_path("./img/account_small.png"), resource_path("./img/account_big.png")]
   logout_paths = [resource_path("./img/logout.png"), resource_path("./img/logout_hover.png")]
   username_paths = [resource_path("./img/username.png"), resource_path("./img/username_clicked.png")]
+
+  await stay_login()
 
   if try_to_click_images(username_paths):
     await asyncio.sleep(0.1)
@@ -231,6 +239,8 @@ async def input_ready():
     await asyncio.sleep(0.1)
     try_to_click_images(logout_paths)
     await asyncio.sleep(3)
+
+    await stay_login()
     if try_to_click_images(username_paths):
      await asyncio.sleep(0.1)
      return True
@@ -251,6 +261,8 @@ async def input_idpwd(id, pwd):
   await asyncio.sleep(0.1)
 
   pyautogui.hotkey("ctrl", "v")
+
+  await asyncio.sleep(0.1)
   
   # Press enter
   pyautogui.press("enter")
